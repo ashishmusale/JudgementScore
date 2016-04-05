@@ -24,7 +24,9 @@ import android.widget.TextView;
 import com.amusale.judgementscore.model.Score;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -137,21 +139,32 @@ public class MainActivity extends AppCompatActivity {
             tableRow.setMinimumWidth(HEIGHT);
             tableRow.setGravity(Gravity.CENTER_VERTICAL);
 
+            Map<String, String> scoreMap = new HashMap<>();
+            Score score = null;
+            if (i > 0) {
+                score = scores.get(i-1);
+                String[] points = score.getPoints().split(";");
+
+                for (String s : points) {
+
+                    String[] userPoints = s.split("=");
+                    if (userPoints.length > 1) {
+                        scoreMap.put(userPoints[0], userPoints[1]);
+                    }
+                }
+
+            }
+
+
             for (int j= 0; j < columnCount; j++) {
                 // 4) create textView
                 TextView textView = new TextView(this);
                 textView.setHeight(HEIGHT);
                 textView.setWidth(HEIGHT);
-                //  textView.setText(String.valueOf(j));
                 textView.setBackgroundColor(Color.WHITE);
                 textView.setGravity(Gravity.CENTER);
 
-                String s1 = Integer.toString(i);
-                String s2 = Integer.toString(j);
-                String s3 = s1 + s2;
-                int id = Integer.parseInt(s3);
-
-                if (i ==0 && j==0){
+                if (i == 0 && j == 0) {
                     final ImageView image = new ImageView(MainActivity.this);
 
                     image.setImageResource(R.mipmap.add_game);
@@ -182,18 +195,16 @@ public class MainActivity extends AppCompatActivity {
 
                     tableRow.addView(image);
 
-                } else if(i==0){
+                } else if(i == 0) {
 
                     // Column Headers
-//                    Log.d("TAAG", "set Column Headers");
                     textView.setText(cv[j - 1]);
                     tableRow.addView(textView, tableRowParams);
 
-                } else if(j == 0){
+                } else if(j == 0) {
 
                     // Row Headers
                     ImageView image = new ImageView(MainActivity.this);
-                    Score score = scores.get(i-1);
                     image.setImageResource(getResource(score.getWildcard()));
                     image.setAdjustViewBounds(true);
                     image.setMaxHeight(128);
@@ -204,25 +215,12 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
 
-                    Score score = scores.get(i-1);
-                    String[] points = score.getPoints().split(";");
+                    String point = scoreMap.get(Integer.toString(j));
 
-//                    for (int pointCount = 0; pointCount < points.length; pointCount++) {
-//                        String individualScore = points[pointCount];
-//                        String[] scoreSplit = individualScore.split("=");
-//
-//                        String point = scoreSplit[1];
-//                    }
-
-                    String point = "0";
-                    if (j-1 < points.length) {
-
-                        String individualScore = points[j - 1];
-                        String[] scoreSplit = individualScore.split("=");
-                        point = scoreSplit[1];
+                    if (null == point) {
+                        point = "0";
                     }
-                    //Log.i("POINTS", point);
-                    textView.setText("" + point);
+                    textView.setText(point);
 
                     tableRow.addView(textView, tableRowParams);
                 }
@@ -231,6 +229,20 @@ public class MainActivity extends AppCompatActivity {
             // 6) add tableRow to tableLayout
             tableLayout.addView(tableRow, tableLayoutParams);
         }
+
+        TableRow tableRow = new TableRow(this);
+        tableRow.setBackgroundColor(Color.BLACK);
+        tableRow.setMinimumHeight(HEIGHT);
+        tableRow.setMinimumWidth(HEIGHT);
+        tableRow.setGravity(Gravity.CENTER_VERTICAL);
+        TextView textView = new TextView(this);
+        textView.setHeight(HEIGHT);
+        textView.setWidth(HEIGHT);
+        textView.setBackgroundColor(Color.WHITE);
+        textView.setGravity(Gravity.CENTER);
+        textView.setText("Total");
+        tableRow.addView(textView);
+        tableLayout.addView(tableRow);
 
         return tableLayout;
     }

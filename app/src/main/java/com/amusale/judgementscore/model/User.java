@@ -5,15 +5,26 @@ package com.amusale.judgementscore.model;
  */
 public class User {
 
+    private int userId;
     private String userName;
     private String userGender;
     private int userAge;
 
-    public User(String userName, String userGender, int userAge) {
+    public User(int userId, String userName, String userGender, int userAge) {
+        this.userId = userId;
         this.userName = userName;
         this.userGender = userGender;
         this.userAge = userAge;
     }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     public String getUserName() {
         return userName;
     }
