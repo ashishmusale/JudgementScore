@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.amusale.judgementscore.model.Game;
+import com.amusale.judgementscore.model.Score;
 import com.amusale.judgementscore.model.User;
 
 import java.util.ArrayList;
@@ -35,8 +37,18 @@ public class NewGame extends AppCompatActivity {
         gameId = getIntent().getIntExtra(MainActivity.SCORE_KEY_CONTACT_ID, 0);
         gameAction = getIntent().getStringExtra(MainActivity.SCORE_ACTION);
 
+
+        Game gameInfo = new Game();
+        gameInfo.setUser(getUsers());
+        gameInfo.setGameAction(gameAction);
+        gameInfo.setGameId(gameId);
+
+        Score score = new Score();
+        score.setMaxNumOfCards(getNumOfHands());
+        gameInfo.setScore(score);
+
         final ScoreAdapter scoreAdapter = new ScoreAdapter(this, R.layout.game_input, getUsers());
-        scoreAdapter.setGameAction(gameAction);
+        scoreAdapter.setGameInfo(gameInfo);
         listView = (ListView)findViewById(R.id.listUsers);
         listView.setAdapter(scoreAdapter);
 

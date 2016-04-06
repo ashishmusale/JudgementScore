@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amusale.judgementscore.model.Game;
 import com.amusale.judgementscore.model.Score;
 import com.amusale.judgementscore.model.User;
 
@@ -30,7 +31,8 @@ public class ScoreAdapter extends ArrayAdapter<User> {
     private int layoutResourceId;
     private LayoutInflater inflater;
     private List<User> users;
-    private String gameAction;
+
+    private Game gameInfo;
 
     public ScoreAdapter(Context c, int layoutResourceId, List<User> objects){
         super(c, layoutResourceId, objects);
@@ -40,8 +42,8 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setGameAction(String gameAction) {
-        this.gameAction = gameAction;
+    public void setGameInfo(Game gameInfo) {
+        this.gameInfo = gameInfo;
     }
 
     public class ViewHolder {
@@ -160,10 +162,10 @@ public class ScoreAdapter extends ArrayAdapter<User> {
 
         LinearLayout editLayout = (LinearLayout)view.findViewById(R.id.editInput);
         LinearLayout addLayout = (LinearLayout)view.findViewById(R.id.addInput);
-        if (gameAction.equals(MainActivity.SCORE_ACTION_NEW)) {
+        if (gameInfo.getGameAction().equals(MainActivity.SCORE_ACTION_NEW)) {
             editLayout.setVisibility(View.GONE);
             addLayout.setVisibility(View.VISIBLE);
-        } else if (gameAction.equals(MainActivity.SCORE_ACTION_EDIT)) {
+        } else if (gameInfo.getGameAction().equals(MainActivity.SCORE_ACTION_EDIT)) {
             editLayout.setVisibility(View.VISIBLE);
             addLayout.setVisibility(View.GONE);
         }
@@ -182,7 +184,10 @@ public class ScoreAdapter extends ArrayAdapter<User> {
                 } catch (NumberFormatException ex) {
                     value = 0;
                 }
-                valueTextView.setText(String.format("%d", value + 1));
+                if (value <= gameInfo.getScore().getMaxNumOfCards()) {
+                    valueTextView.setText(String.format("%d", value + 1));
+                }
+
             }
         });
 
@@ -197,7 +202,9 @@ public class ScoreAdapter extends ArrayAdapter<User> {
                 } catch (NumberFormatException ex) {
                     value = 0;
                 }
-                valueTextView.setText(String.format("%d", value - 1));
+                if (value > 0) {
+                    valueTextView.setText(String.format("%d", value - 1));
+                }
             }
         });
 
