@@ -53,15 +53,26 @@ public class NewGame extends AppCompatActivity {
         listView.setAdapter(scoreAdapter);
 
 
-        Button button = (Button) findViewById(R.id.saveGame);
-        if (null != button) {
-            button.setOnClickListener(new View.OnClickListener() {
+
+
+        Button createGameButton = (Button) findViewById(R.id.create_game);
+        Button finishGameButton = (Button) findViewById(R.id.finish_game);
+
+        if (gameAction.equals(MainActivity.SCORE_ACTION_EDIT)) {
+            finishGameButton.setVisibility(View.VISIBLE);
+            createGameButton.setVisibility(View.GONE);
+        } else {
+            finishGameButton.setVisibility(View.GONE);
+            createGameButton.setVisibility(View.VISIBLE);
+        }
+        if (null != createGameButton) {
+            createGameButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     Set<String> keys = scoreAdapter.getTextValues().keySet();
                     String points = "";
-                    for (String key: keys) {
+                    for (String key : keys) {
 
                         String[] keySplit = key.split(":");
                         if (keySplit.length == 2) {
@@ -81,7 +92,7 @@ public class NewGame extends AppCompatActivity {
                 }
             });
         } else {
-            Log.e("BUTTON", "button SAVE GAME was not found on the page");
+            Log.e("BUTTON", "createGameButton SAVE GAME was not found on the page");
         }
     }
 
