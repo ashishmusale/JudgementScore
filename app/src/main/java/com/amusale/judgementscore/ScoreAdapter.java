@@ -15,12 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amusale.judgementscore.model.Game;
-import com.amusale.judgementscore.model.Score;
 import com.amusale.judgementscore.model.User;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by amusale on 4/5/16.
@@ -143,7 +141,9 @@ public class ScoreAdapter extends ArrayAdapter<User> {
 //                Log.i(SystemSettings.APP_TAG + " : " + HomeActivity.class.getName(), "Entered onClick method");
                 Toast.makeText(v.getContext(),
                         "Won Clicked",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
+                View root = (View)((View)v.getParent()).getParent();
+                root.setBackgroundResource(R.drawable.custom_border);
             }
         });
 
@@ -153,7 +153,7 @@ public class ScoreAdapter extends ArrayAdapter<User> {
 //                Log.i(SystemSettings.APP_TAG + " : " + HomeActivity.class.getName(), "Entered onClick method");
                 Toast.makeText(v.getContext(),
                         "Loss Clicked",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }

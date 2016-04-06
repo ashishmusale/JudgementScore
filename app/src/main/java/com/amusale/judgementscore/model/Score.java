@@ -5,10 +5,19 @@ package com.amusale.judgementscore.model;
  */
 public class Score {
 
+    private int id;
     private String wildcard;
     private int maxNumOfCards;
     private String status;
     private String points;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getWildcard() {
         return wildcard;

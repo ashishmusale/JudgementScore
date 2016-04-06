@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amusale.judgementscore.model.Score;
 
@@ -182,10 +182,17 @@ public class MainActivity extends AppCompatActivity {
                         public boolean onTouch(View arg0, MotionEvent arg1) {
                             switch (arg1.getAction()) {
                                 case MotionEvent.ACTION_DOWN: {
-                                    Intent intent=new Intent(MainActivity.this, NewGame.class);
-                                    intent.putExtra(SCORE_KEY_CONTACT_ID, dbHelper.getAllScores().getCount());
-                                    intent.putExtra(SCORE_ACTION, SCORE_ACTION_NEW);
-                                    startActivity(intent);
+
+                                    if(gameInProgress()) {
+                                        Toast.makeText(getApplicationContext(),
+                                                "Previous game already in progress", Toast.LENGTH_SHORT).show();
+                                    } else {
+
+                                        Intent intent = new Intent(MainActivity.this, NewGame.class);
+                                        intent.putExtra(SCORE_KEY_CONTACT_ID, dbHelper.getAllScores().getCount());
+                                        intent.putExtra(SCORE_ACTION, SCORE_ACTION_NEW);
+                                        startActivity(intent);
+                                    }
                                     break;
                                 }
                                 case MotionEvent.ACTION_CANCEL: {
@@ -214,6 +221,17 @@ public class MainActivity extends AppCompatActivity {
                     image.setMaxHeight(128);
                     image.setMaxWidth(128);
                     image.setBackgroundColor(Color.WHITE);
+                    image.setTag(R.id.gameIdResource, score.getId());
+
+                    image.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent=new Intent(MainActivity.this, NewGame.class);
+                            intent.putExtra(SCORE_KEY_CONTACT_ID, (int)v.getTag(R.id.gameIdResource));
+                            intent.putExtra(SCORE_ACTION, SCORE_ACTION_EDIT);
+                            startActivity(intent);
+                        }
+                    });
 
                     tableRow.addView(image);
 
@@ -274,8 +292,10 @@ public class MainActivity extends AppCompatActivity {
             String scoreWildcard = allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_WILD_CARD));
             String scorePoints = allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_POINTS));
             Score score = new Score();
+            score.setId(allScores.getInt(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_ID)));
             score.setWildcard(scoreWildcard);
             score.setPoints(scorePoints);
+            score.setStatus(allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_STATUS)));
 
             scores.add(score);
             allScores.moveToNext();
@@ -307,5 +327,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return names;
+    }
+
+    private boolean gameInProgress() {
+        List<Score> scores = getScores();
+
+        for (Score score: scores) {
+            if (score.getStatus().equals("In Progress")) {
+                return true;
+            }
+        }
+        return false;
     }
 }
