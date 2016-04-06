@@ -7,4 +7,8 @@
     <!-- add new user -->
     <dimen name="default_element_height">50dp</dimen>
     <dimen name="text_size">20dp</dimen>
+
+    <dimen name="vertical_margin">4dp</dimen>
+    <dimen name="horizontal_margin">4dp</dimen>
+    <dimen name="btn_horizontal_margin">4dp</dimen>
 </resources>

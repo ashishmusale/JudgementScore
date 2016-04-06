@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
 
     public final static String KEY_EXTRA_CONTACT_ID = "KEY_EXTRA_CONTACT_ID";
     public final static String SCORE_KEY_CONTACT_ID = "SCORE_KEY_CONTACT_ID";
+    public final static String SCORE_ACTION = "SCORE_ACTION";
+    public final static String SCORE_ACTION_NEW = "SCORE_ACTION_NEW";
+    public final static String SCORE_ACTION_EDIT = "SCORE_ACTION_EDIT";
     private static final int HEIGHT = 200;
 
     RelativeLayout relativeLayout;
@@ -181,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                                 case MotionEvent.ACTION_DOWN: {
                                     Intent intent=new Intent(MainActivity.this, NewGame.class);
                                     intent.putExtra(SCORE_KEY_CONTACT_ID, dbHelper.getAllScores().getCount());
+                                    intent.putExtra(SCORE_ACTION, SCORE_ACTION_NEW);
                                     startActivity(intent);
                                     break;
                                 }

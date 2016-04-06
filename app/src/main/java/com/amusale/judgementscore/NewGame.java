@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ public class NewGame extends AppCompatActivity {
     private DBHelper dbHelper ;
     private ListView listView;
     private int gameId;
+    private String gameAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +33,10 @@ public class NewGame extends AppCompatActivity {
         dbHelper = new DBHelper(this);
 
         gameId = getIntent().getIntExtra(MainActivity.SCORE_KEY_CONTACT_ID, 0);
+        gameAction = getIntent().getStringExtra(MainActivity.SCORE_ACTION);
 
         final ScoreAdapter scoreAdapter = new ScoreAdapter(this, R.layout.game_input, getUsers());
+        scoreAdapter.setGameAction(gameAction);
         listView = (ListView)findViewById(R.id.listUsers);
         listView.setAdapter(scoreAdapter);
 

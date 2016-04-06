@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amusale.judgementscore.model.Score;
 import com.amusale.judgementscore.model.User;
@@ -27,6 +30,7 @@ public class ScoreAdapter extends ArrayAdapter<User> {
     private int layoutResourceId;
     private LayoutInflater inflater;
     private List<User> users;
+    private String gameAction;
 
     public ScoreAdapter(Context c, int layoutResourceId, List<User> objects){
         super(c, layoutResourceId, objects);
@@ -34,6 +38,10 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         this.layoutResourceId = layoutResourceId;
         this.context = c;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public void setGameAction(String gameAction) {
+        this.gameAction = gameAction;
     }
 
     public class ViewHolder {
@@ -71,6 +79,9 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         holder.userName.setText(currentUser.getUserName());
 
         String value = textValues.get("editTextPosition:" + currentUser.getUserId());
+        if (null == value) {
+            value = "0";
+        }
         holder.numOfHands.setText(value);
 
         if(convertViewWasNull){
@@ -81,6 +92,9 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         //Log.i("POSITION", Integer.toString(position));
         //whereas, this should be called on each getView call, to update view tags.
         holder.numOfHands.setTag("editTextPosition:" + currentUser.getUserId());
+
+        setupImageListener(convertView);
+        setupViews(convertView, holder);
 
         return convertView;
     }
@@ -110,5 +124,82 @@ public class ScoreAdapter extends ArrayAdapter<User> {
 
     public HashMap<String, String> getTextValues() {
         return textValues;
+    }
+
+
+    private void setupImageListener(View view) {
+        ImageView wonImageView = (ImageView) view.findViewById(R.id.wonBtn);
+        ImageView loseImageView = (ImageView) view.findViewById(R.id.loseBtn);
+
+        if (null == wonImageView || null == loseImageView) {
+            return;
+        }
+
+        wonImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Log.i(SystemSettings.APP_TAG + " : " + HomeActivity.class.getName(), "Entered onClick method");
+                Toast.makeText(v.getContext(),
+                        "Won Clicked",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+
+        loseImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Log.i(SystemSettings.APP_TAG + " : " + HomeActivity.class.getName(), "Entered onClick method");
+                Toast.makeText(v.getContext(),
+                        "Loss Clicked",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void setupViews(final View view, final ViewHolder holder) {
+
+        LinearLayout editLayout = (LinearLayout)view.findViewById(R.id.editInput);
+        LinearLayout addLayout = (LinearLayout)view.findViewById(R.id.addInput);
+        if (gameAction.equals(MainActivity.SCORE_ACTION_NEW)) {
+            editLayout.setVisibility(View.GONE);
+            addLayout.setVisibility(View.VISIBLE);
+        } else if (gameAction.equals(MainActivity.SCORE_ACTION_EDIT)) {
+            editLayout.setVisibility(View.VISIBLE);
+            addLayout.setVisibility(View.GONE);
+        }
+
+        ImageView increment = (ImageView) view.findViewById(R.id.plus);
+        ImageView decrement = (ImageView) view.findViewById(R.id.minus);
+
+        increment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Integer value;
+                View parent = (View) v.getParent();
+                EditText valueTextView = (EditText)parent.findViewById(R.id.numOfHands);
+                try {
+                    value = Integer.parseInt(valueTextView.getText().toString());
+                } catch (NumberFormatException ex) {
+                    value = 0;
+                }
+                valueTextView.setText(String.format("%d", value + 1));
+            }
+        });
+
+        decrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View parent = (View) v.getParent();
+                EditText valueTextView = (EditText)parent.findViewById(R.id.numOfHands);
+                Integer value;
+                try {
+                    value = Integer.parseInt(valueTextView.getText().toString());
+                } catch (NumberFormatException ex) {
+                    value = 0;
+                }
+                valueTextView.setText(String.format("%d", value - 1));
+            }
+        });
+
     }
 }

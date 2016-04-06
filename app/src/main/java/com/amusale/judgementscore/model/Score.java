@@ -6,7 +6,7 @@ package com.amusale.judgementscore.model;
 public class Score {
 
     private String wildcard;
-    private int numOfCards;
+    private int maxNumOfCards;
     private String status;
     private String points;
 
@@ -18,12 +18,12 @@ public class Score {
         this.wildcard = wildcard;
     }
 
-    public int getNumOfCards() {
-        return numOfCards;
+    public int getMaxNumOfCards() {
+        return maxNumOfCards;
     }
 
-    public void setNumOfCards(int numOfCards) {
-        this.numOfCards = numOfCards;
+    public void setMaxNumOfCards(int maxNumOfCards) {
+        this.maxNumOfCards = maxNumOfCards;
     }
 
     public String getStatus() {
