@@ -1,7 +1,6 @@
-package com.amusale.judgementscore;
+package com.amusale.judgementscore.activity;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,6 +20,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amusale.judgementscore.ActionUsers;
+import com.amusale.judgementscore.DBHelper;
+import com.amusale.judgementscore.R;
 import com.amusale.judgementscore.model.Score;
 import com.amusale.judgementscore.model.User;
 
@@ -244,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (inProgress) {
-                    Intent intent = new Intent(MainActivity.this, NewGame.class);
+                    Intent intent = new Intent(MainActivity.this, GameActivity.class);
                     intent.putExtra(SCORE_KEY_CONTACT_ID, (int) v.getTag(R.id.gameIdResource));
                     intent.putExtra(SCORE_ACTION, SCORE_ACTION_EDIT);
                     startActivity(intent);
@@ -278,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
                                     "Previous game already in progress", Toast.LENGTH_SHORT).show();
                         } else {
 
-                            Intent intent = new Intent(MainActivity.this, NewGame.class);
+                            Intent intent = new Intent(MainActivity.this, GameActivity.class);
                             intent.putExtra(SCORE_KEY_CONTACT_ID, dbHelper.getAllScores().size());
                             intent.putExtra(SCORE_ACTION, SCORE_ACTION_NEW);
                             startActivity(intent);

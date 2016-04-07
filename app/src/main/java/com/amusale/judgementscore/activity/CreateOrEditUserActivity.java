@@ -1,4 +1,4 @@
-package com.amusale.judgementscore;
+package com.amusale.judgementscore.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.amusale.judgementscore.DBHelper;
+import com.amusale.judgementscore.R;
 import com.amusale.judgementscore.model.User;
 
 /**

@@ -1,7 +1,6 @@
-package com.amusale.judgementscore;
+package com.amusale.judgementscore.activity;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,15 +10,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amusale.judgementscore.DBHelper;
+import com.amusale.judgementscore.R;
+import com.amusale.judgementscore.ScoreAdapter;
+import com.amusale.judgementscore.activity.MainActivity;
 import com.amusale.judgementscore.model.Game;
 import com.amusale.judgementscore.model.Score;
-import com.amusale.judgementscore.model.User;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
-public class NewGame extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity {
 
 
     public static final int STATUS_WON = 0;
@@ -33,7 +33,7 @@ public class NewGame extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_game);
+        setContentView(R.layout.activity_game);
         dbHelper = new DBHelper(this);
 
         gameId = getIntent().getIntExtra(MainActivity.SCORE_KEY_CONTACT_ID, 0);

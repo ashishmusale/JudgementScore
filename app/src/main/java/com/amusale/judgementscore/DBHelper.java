@@ -104,7 +104,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor =  db.rawQuery("SELECT * FROM " + USER_TABLE_NAME + " WHERE " +
                 USER_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
-
+        cursor.moveToFirst();
         return getUserFromCursor(cursor);
     }
 
