@@ -159,20 +159,22 @@ public class MainActivity extends AppCompatActivity {
             for (int j= 0; j < columnCount; j++) {
 
                 TextView textView = generateTextView(this);
-                // 4) create textView
+                User user = null;
+                if (j > 0)
+                 user = users.get(j-1);
 
                 if (i == 0 && j == 0) {
                     tableRow.addView(fillZeroZeroCell());
                 } else if(i == 0) {
                     // Column Headers
-                    textView.setText(users.get(j - 1).getUserName());
+                    textView.setText(user.getUserName());
                     tableRow.addView(textView, tableRowParams);
                 } else if(j == 0) {
                     // Row Headers
                     tableRow.addView(fillRowHeaders(score));
                 } else {
                     // Score cells
-                    tableRow.addView(fillScoreCells(scoreMap.get(Integer.toString(j)), textView), tableRowParams);
+                    tableRow.addView(fillScoreCells(scoreMap.get(Integer.toString(user.getUserId())), textView), tableRowParams);
                 }
             }
 
