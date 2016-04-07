@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
         tableRowParams.setMargins(1, 1, 1, 1);
         tableRowParams.weight = 1;
-        List<Score> scores = getScores();
+        List<Score> scores = dbHelper.getAllScores();
 
         for (int i = 0; i < scores.size() +1 ; i++) {
             // 3) create tableRow
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
                 for (String s : points) {
 
-                    String[] userPoints = s.split("=");
+                    String[] userPoints = s.split(":");
                     if (userPoints.length > 1) {
                         scoreMap.put(userPoints[0], userPoints[1]);
                     }
@@ -160,91 +160,22 @@ public class MainActivity extends AppCompatActivity {
 
 
             for (int j= 0; j < columnCount; j++) {
+
+                TextView textView = generateTextView(this);
                 // 4) create textView
-                TextView textView = new TextView(this);
-                textView.setHeight(HEIGHT);
-                textView.setWidth(HEIGHT);
-                textView.setBackgroundColor(Color.WHITE);
-                textView.setGravity(Gravity.CENTER);
 
                 if (i == 0 && j == 0) {
-                    final ImageView image = new ImageView(MainActivity.this);
-
-                    image.setImageResource(R.mipmap.add_game);
-                    image.setAdjustViewBounds(true);
-                    image.setMaxHeight(64);
-                    image.setMaxWidth(64);
-                    image.setBackgroundColor(Color.WHITE);
-                    image.setClickable(true);
-
-                    image.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View arg0, MotionEvent arg1) {
-                            switch (arg1.getAction()) {
-                                case MotionEvent.ACTION_DOWN: {
-
-                                    if(gameInProgress()) {
-                                        Toast.makeText(getApplicationContext(),
-                                                "Previous game already in progress", Toast.LENGTH_SHORT).show();
-                                    } else {
-
-                                        Intent intent = new Intent(MainActivity.this, NewGame.class);
-                                        intent.putExtra(SCORE_KEY_CONTACT_ID, dbHelper.getAllScores().getCount());
-                                        intent.putExtra(SCORE_ACTION, SCORE_ACTION_NEW);
-                                        startActivity(intent);
-                                    }
-                                    break;
-                                }
-                                case MotionEvent.ACTION_CANCEL: {
-//                                    image.setImageBitmap(res.getDrawable(R.drawable.img_up));
-                                    break;
-                                }
-                            }
-                            return true;
-                        }
-                    });
-
-                    tableRow.addView(image);
-
+                    tableRow.addView(fillZeroZeroCell());
                 } else if(i == 0) {
-
                     // Column Headers
                     textView.setText(cv[j - 1]);
                     tableRow.addView(textView, tableRowParams);
-
                 } else if(j == 0) {
-
                     // Row Headers
-                    ImageView image = new ImageView(MainActivity.this);
-                    image.setImageResource(getResource(score.getWildcard()));
-                    image.setAdjustViewBounds(true);
-                    image.setMaxHeight(128);
-                    image.setMaxWidth(128);
-                    image.setBackgroundColor(Color.WHITE);
-                    image.setTag(R.id.gameIdResource, score.getId());
-
-                    image.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent=new Intent(MainActivity.this, NewGame.class);
-                            intent.putExtra(SCORE_KEY_CONTACT_ID, (int)v.getTag(R.id.gameIdResource));
-                            intent.putExtra(SCORE_ACTION, SCORE_ACTION_EDIT);
-                            startActivity(intent);
-                        }
-                    });
-
-                    tableRow.addView(image);
-
+                    tableRow.addView(fillRowHeaders(score));
                 } else {
-
-                    String point = scoreMap.get(Integer.toString(j));
-
-                    if (null == point) {
-                        point = "0";
-                    }
-                    textView.setText(point);
-
-                    tableRow.addView(textView, tableRowParams);
+                    // Score cells
+                    tableRow.addView(fillScoreCells(scoreMap.get(Integer.toString(j)), textView), tableRowParams);
                 }
             }
 
@@ -281,33 +212,6 @@ public class MainActivity extends AppCompatActivity {
         return R.mipmap.hearts;
     }
 
-    private List<Score> getScores() {
-
-        Cursor allScores = dbHelper.getAllScores();
-        allScores.moveToFirst();
-
-        List<Score> scores = new ArrayList<>();
-        for (int i=0; i < allScores.getCount(); i++) {
-
-            String scoreWildcard = allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_WILD_CARD));
-            String scorePoints = allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_POINTS));
-            Score score = new Score();
-            score.setId(allScores.getInt(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_ID)));
-            score.setWildcard(scoreWildcard);
-            score.setPoints(scorePoints);
-            score.setStatus(allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_STATUS)));
-
-            scores.add(score);
-            allScores.moveToNext();
-        }
-
-        if (!allScores.isClosed()) {
-            allScores.close();
-        }
-        return scores;
-    }
-
-
     private String[] getNames() {
 
         Cursor allUsers = dbHelper.getAllUsers();
@@ -329,8 +233,11 @@ public class MainActivity extends AppCompatActivity {
         return names;
     }
 
+    private boolean gameInProgress(Score score) {
+        return score.getStatus().equals("In Progress");
+    }
     private boolean gameInProgress() {
-        List<Score> scores = getScores();
+        List<Score> scores = dbHelper.getAllScores();
 
         for (Score score: scores) {
             if (score.getStatus().equals("In Progress")) {
@@ -338,5 +245,92 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+
+    private TextView fillScoreCells(String point, TextView textView) {
+
+        if (null == point) {
+            point = "0";
+        }
+        textView.setText(point);
+        return textView;
+    }
+
+    private ImageView fillRowHeaders(Score score) {
+        ImageView image = new ImageView(MainActivity.this);
+        image.setImageResource(getResource(score.getWildcard()));
+        image.setAdjustViewBounds(true);
+        image.setMaxHeight(128);
+        image.setMaxWidth(128);
+        image.setBackgroundColor(Color.WHITE);
+        image.setTag(R.id.gameIdResource, score.getId());
+
+        final boolean inProgress = gameInProgress(score);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (inProgress) {
+                    Intent intent = new Intent(MainActivity.this, NewGame.class);
+                    intent.putExtra(SCORE_KEY_CONTACT_ID, (int) v.getTag(R.id.gameIdResource));
+                    intent.putExtra(SCORE_ACTION, SCORE_ACTION_EDIT);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Game already completed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        return image;
+
+    }
+
+    private ImageView fillZeroZeroCell() {
+        final ImageView image = new ImageView(MainActivity.this);
+
+        image.setImageResource(R.mipmap.add_game);
+        image.setAdjustViewBounds(true);
+        image.setMaxHeight(64);
+        image.setMaxWidth(64);
+        image.setBackgroundColor(Color.WHITE);
+        image.setClickable(true);
+
+        image.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                switch (arg1.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+
+                        if (gameInProgress()) {
+                            Toast.makeText(getApplicationContext(),
+                                    "Previous game already in progress", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            Intent intent = new Intent(MainActivity.this, NewGame.class);
+                            intent.putExtra(SCORE_KEY_CONTACT_ID, dbHelper.getAllScores().size());
+                            intent.putExtra(SCORE_ACTION, SCORE_ACTION_NEW);
+                            startActivity(intent);
+                        }
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+//                                    image.setImageBitmap(res.getDrawable(R.drawable.img_up));
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+        return image;
+    }
+
+    private TextView generateTextView(MainActivity mainActivity) {
+        TextView textView = new TextView(mainActivity);
+        textView.setHeight(HEIGHT);
+        textView.setWidth(HEIGHT);
+        textView.setBackgroundColor(Color.WHITE);
+        textView.setGravity(Gravity.CENTER);
+
+        return textView;
     }
 }

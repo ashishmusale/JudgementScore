@@ -7,6 +7,11 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.amusale.judgementscore.model.Score;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by amusale on 4/4/16.
  */
@@ -76,11 +81,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public int numberOfRows() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, USER_TABLE_NAME);
-        return numRows;
-    }
 
     public boolean updateUser(Integer id, String name, String gender, int age) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -112,6 +112,19 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     // SCORE
+    public boolean insertScore(Score score) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(SCORE_COLUMN_WILD_CARD, score.getWildcard());
+        contentValues.put(SCORE_COLUMN_NUM_OF_CARDS, score.getMaxNumOfCards());
+        contentValues.put(SCORE_COLUMN_STATUS, score.getStatus());
+        contentValues.put(SCORE_COLUMN_POINTS, score.getPoints());
+
+        db.insert(SCORE_TABLE_NAME, null, contentValues);
+        return true;
+    }
+
     public boolean insertScore(String wildcard, int numOfCards, String status, String points) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -125,11 +138,30 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateScore(Integer id, String wildcard, int numOfCards, String status, String points) {
+    public Score getScore(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor scoreCursor =  db.rawQuery("SELECT * FROM " + SCORE_TABLE_NAME + " WHERE " +
+                SCORE_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
+
+        scoreCursor.moveToFirst();
+
+        String scoreWildcard = scoreCursor.getString(scoreCursor.getColumnIndex(DBHelper.SCORE_COLUMN_WILD_CARD));
+        String scorePoints = scoreCursor.getString(scoreCursor.getColumnIndex(DBHelper.SCORE_COLUMN_POINTS));
+        Score score = new Score();
+        score.setId(scoreCursor.getInt(scoreCursor.getColumnIndex(DBHelper.SCORE_COLUMN_ID)));
+        score.setWildcard(scoreWildcard);
+        score.setPoints(scorePoints);
+        score.setStatus(scoreCursor.getString(scoreCursor.getColumnIndex(DBHelper.SCORE_COLUMN_STATUS)));
+
+        if (!scoreCursor.isClosed()) {
+            scoreCursor.close();
+        }
+        return score;
+    }
+
+    public boolean updateScore(Integer id, String status, String points) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(SCORE_COLUMN_WILD_CARD, wildcard);
-        contentValues.put(SCORE_COLUMN_NUM_OF_CARDS, numOfCards);
         contentValues.put(SCORE_COLUMN_STATUS, status);
         contentValues.put(SCORE_COLUMN_POINTS, points);
 
@@ -137,8 +169,29 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public Cursor getAllScores() {
-        return getAll(SCORE_TABLE_NAME);
+    public List<Score> getAllScores() {
+        Cursor allScores = getAll(SCORE_TABLE_NAME);
+        allScores.moveToFirst();
+
+        List<Score> scores = new ArrayList<>();
+        for (int i=0; i < allScores.getCount(); i++) {
+
+            String scoreWildcard = allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_WILD_CARD));
+            String scorePoints = allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_POINTS));
+            Score score = new Score();
+            score.setId(allScores.getInt(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_ID)));
+            score.setWildcard(scoreWildcard);
+            score.setPoints(scorePoints);
+            score.setStatus(allScores.getString(allScores.getColumnIndex(DBHelper.SCORE_COLUMN_STATUS)));
+
+            scores.add(score);
+            allScores.moveToNext();
+        }
+
+        if (!allScores.isClosed()) {
+            allScores.close();
+        }
+        return scores;
     }
 
 
