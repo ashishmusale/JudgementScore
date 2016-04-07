@@ -67,7 +67,33 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onOpen(SQLiteDatabase db) {
-        //
+
+    }
+
+    public void resetGames() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + SCORE_TABLE_NAME);
+
+        db.execSQL(
+                "CREATE TABLE " + SCORE_TABLE_NAME +
+                        "(" + SCORE_COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                        SCORE_COLUMN_WILD_CARD + " TEXT, " +
+                        SCORE_COLUMN_STATUS + " TEXT, " +
+                        SCORE_COLUMN_NUM_OF_CARDS + " INTEGER, " +
+                        SCORE_COLUMN_POINTS + " TEXT)"
+        );
+    }
+
+    public void resetUsers() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE_NAME);
+        db.execSQL(
+                "CREATE TABLE " + USER_TABLE_NAME +
+                        "(" + USER_COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                        USER_COLUMN_NAME + " TEXT, " +
+                        USER_COLUMN_GENDER + " TEXT, " +
+                        USER_COLUMN_AGE + " INTEGER)"
+        );
     }
 
     public boolean insertUser(String name, String gender, int age) {
