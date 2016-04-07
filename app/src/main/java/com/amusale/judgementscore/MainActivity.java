@@ -22,8 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amusale.judgementscore.model.Score;
+import com.amusale.judgementscore.model.User;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,12 +46,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        TextView mTextView = (TextView) findViewById(R.id.textview1);
-
-        if (null != mTextView) {
-            mTextView.setText("** Game Name here **");
-        }
 
         dbHelper = new DBHelper(this);
         createGridView();
@@ -102,14 +96,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void createGridView() {
 
-        String[] row = { "empty", "spade", "diamond", "clubs", "hearts", "spade", "diamond", "clubs", "hearts"};
-        String[] column = getNames();
+        List<User> users = dbHelper.getAllUsers();
 
-        int rl=row.length;
-        int cl=column.length +1;
+
+        int cl = users.size() + 1;
 
         ScrollView sv = new ScrollView(this);
-        TableLayout tableLayout = createTableLayout(row, column,rl, cl);
+        TableLayout tableLayout = createTableLayout(users, cl);
         HorizontalScrollView hsv = new HorizontalScrollView(this);
 
         hsv.addView(tableLayout);
@@ -122,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private TableLayout createTableLayout(String [] rv, String [] cv,int rowCount, int columnCount) {
+    private TableLayout createTableLayout(List<User> users, int columnCount) {
         // 1) Create a tableLayout and its params
         TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
         TableLayout tableLayout = new TableLayout(this);
@@ -168,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     tableRow.addView(fillZeroZeroCell());
                 } else if(i == 0) {
                     // Column Headers
-                    textView.setText(cv[j - 1]);
+                    textView.setText(users.get(j - 1).getUserName());
                     tableRow.addView(textView, tableRowParams);
                 } else if(j == 0) {
                     // Row Headers
@@ -210,27 +203,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return R.mipmap.hearts;
-    }
-
-    private String[] getNames() {
-
-        Cursor allUsers = dbHelper.getAllUsers();
-
-        String[] names = new String[allUsers.getCount()];
-        allUsers.moveToFirst();
-        for (int i=0; i < allUsers.getCount(); i++) {
-            String personName = allUsers.getString(allUsers.getColumnIndex(DBHelper.USER_COLUMN_NAME));
-            String personGender = allUsers.getString(allUsers.getColumnIndex(DBHelper.USER_COLUMN_GENDER));
-            int personAge = allUsers.getInt(allUsers.getColumnIndex(DBHelper.USER_COLUMN_AGE));
-
-            names[i] = personName;
-            allUsers.moveToNext();
-        }
-        if (!allUsers.isClosed()) {
-            allUsers.close();
-        }
-
-        return names;
     }
 
     private boolean gameInProgress(Score score) {

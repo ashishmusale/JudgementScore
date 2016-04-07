@@ -41,7 +41,7 @@ public class NewGame extends AppCompatActivity {
 
 
         Game gameInfo = new Game();
-        gameInfo.setUser(getUsers());
+        gameInfo.setUser(dbHelper.getAllUsers());
         gameInfo.setGameAction(gameAction);
         gameInfo.setGameId(gameId);
 
@@ -50,7 +50,7 @@ public class NewGame extends AppCompatActivity {
         score.setWildcard(getWildCard());
         gameInfo.setScore(score);
 
-        final ScoreAdapter scoreAdapter = new ScoreAdapter(this, R.layout.game_input, getUsers());
+        final ScoreAdapter scoreAdapter = new ScoreAdapter(this, R.layout.game_input, dbHelper.getAllUsers());
         scoreAdapter.setGameInfo(gameInfo);
         listView = (ListView)findViewById(R.id.listUsers);
         listView.setAdapter(scoreAdapter);
@@ -150,28 +150,5 @@ public class NewGame extends AppCompatActivity {
         int id = gameId%7;
 
         return 7-id;
-    }
-
-    private List<User> getUsers() {
-
-        Cursor allUsers = dbHelper.getAllUsers();
-
-        List<User> names = new ArrayList<>();
-        allUsers.moveToFirst();
-        for (int i=0; i < allUsers.getCount(); i++) {
-
-            int userId= allUsers.getInt(allUsers.getColumnIndex(DBHelper.USER_COLUMN_ID));
-            String userName = allUsers.getString(allUsers.getColumnIndex(DBHelper.USER_COLUMN_NAME));
-            String userGender = allUsers.getString(allUsers.getColumnIndex(DBHelper.USER_COLUMN_GENDER));
-            int userAge = allUsers.getInt(allUsers.getColumnIndex(DBHelper.USER_COLUMN_AGE));
-
-            names.add(new User(userId, userName, userGender, userAge));
-            allUsers.moveToNext();
-        }
-        if (!allUsers.isClosed()) {
-            allUsers.close();
-        }
-
-        return names;
     }
 }

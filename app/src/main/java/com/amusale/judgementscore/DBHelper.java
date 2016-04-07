@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.amusale.judgementscore.model.Score;
+import com.amusale.judgementscore.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,17 +100,41 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[] { Integer.toString(id) });
     }
 
-    public Cursor getUser(int id) {
+    public User getUser(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery("SELECT * FROM " + USER_TABLE_NAME + " WHERE " +
+        Cursor cursor =  db.rawQuery("SELECT * FROM " + USER_TABLE_NAME + " WHERE " +
                 USER_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
-        return res;
+
+        return getUserFromCursor(cursor);
     }
 
-    public Cursor getAllUsers() {
+    public Cursor getAllUsersCursor() {
         return getAll(USER_TABLE_NAME);
     }
+    public List<User> getAllUsers() {
+        Cursor allUsers = getAll(USER_TABLE_NAME);
 
+        List<User> users= new ArrayList<>();
+        allUsers.moveToFirst();
+        for (int i=0; i < allUsers.getCount(); i++) {
+            users.add(getUserFromCursor(allUsers));
+            allUsers.moveToNext();
+        }
+        if (!allUsers.isClosed()) {
+            allUsers.close();
+        }
+
+        return users;
+    }
+
+    private User getUserFromCursor(Cursor cursor) {
+        int userId = cursor.getInt(cursor.getColumnIndex(DBHelper.USER_COLUMN_ID));
+        String userName = cursor.getString(cursor.getColumnIndex(DBHelper.USER_COLUMN_NAME));
+        String userGender = cursor.getString(cursor.getColumnIndex(DBHelper.USER_COLUMN_GENDER));
+        int userAge = cursor.getInt(cursor.getColumnIndex(DBHelper.USER_COLUMN_AGE));
+
+        return new User(userId, userName, userGender, userAge);
+    }
 
     // SCORE
     public boolean insertScore(Score score) {

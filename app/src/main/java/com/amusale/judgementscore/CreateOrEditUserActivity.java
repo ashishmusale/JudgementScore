@@ -3,7 +3,6 @@ package com.amusale.judgementscore;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -11,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.amusale.judgementscore.model.User;
 
 /**
  * Created by amusale on 4/4/16.
@@ -54,24 +55,17 @@ public class CreateOrEditUserActivity extends ActionBarActivity implements View.
             saveButton.setVisibility(View.GONE);
             buttonLayout.setVisibility(View.VISIBLE);
 
-            Cursor rs = dbHelper.getUser(userID);
-            rs.moveToFirst();
-            String personName = rs.getString(rs.getColumnIndex(DBHelper.USER_COLUMN_NAME));
-            String personGender = rs.getString(rs.getColumnIndex(DBHelper.USER_COLUMN_GENDER));
-            int personAge = rs.getInt(rs.getColumnIndex(DBHelper.USER_COLUMN_AGE));
-            if (!rs.isClosed()) {
-                rs.close();
-            }
+            User user = dbHelper.getUser(userID);
 
-            nameEditText.setText(personName);
+            nameEditText.setText(user.getUserName());
             nameEditText.setFocusable(false);
             nameEditText.setClickable(false);
 
-            genderEditText.setText((CharSequence) personGender);
+            genderEditText.setText(user.getUserGender());
             genderEditText.setFocusable(false);
             genderEditText.setClickable(false);
 
-            ageEditText.setText((CharSequence) (personAge + ""));
+            ageEditText.setText((user.getUserAge() + ""));
             ageEditText.setFocusable(false);
             ageEditText.setClickable(false);
         }

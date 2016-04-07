@@ -34,7 +34,7 @@ public class ActionUsers extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
-        final Cursor cursor = dbHelper.getAllUsers();
+        final Cursor cursor = dbHelper.getAllUsersCursor();
         String [] columns = new String[] {
                 DBHelper.USER_COLUMN_ID,
                 DBHelper.USER_COLUMN_NAME
