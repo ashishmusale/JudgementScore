@@ -20,6 +20,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amusale.judgementscore.activity.action.GameSettingsAction;
 import com.amusale.judgementscore.activity.action.UsersAction;
 import com.amusale.judgementscore.DBHelper;
 import com.amusale.judgementscore.R;
@@ -85,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Intent intent=new Intent(MainActivity.this, GameSettingsAction.class);
+            startActivity(intent);
         } else if (id == R.id.action_users) {
             Intent intent=new Intent(MainActivity.this, UsersAction.class);
             startActivity(intent);

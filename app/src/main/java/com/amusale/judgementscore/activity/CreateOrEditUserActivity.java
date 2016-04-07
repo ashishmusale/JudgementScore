@@ -54,6 +54,7 @@ public class CreateOrEditUserActivity extends ActionBarActivity implements View.
         dbHelper = new DBHelper(this);
 
         if(userID > 0) {
+            setTitle("Add User");
             saveButton.setVisibility(View.GONE);
             buttonLayout.setVisibility(View.VISIBLE);
 
@@ -70,6 +71,8 @@ public class CreateOrEditUserActivity extends ActionBarActivity implements View.
             ageEditText.setText((user.getUserAge() + ""));
             ageEditText.setFocusable(false);
             ageEditText.setClickable(false);
+        } else {
+            setTitle("Edit User");
         }
     }
 

@@ -23,7 +23,8 @@
             android:label="@string/title_activity_activity_edit"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.action.UsersAction" />
-        <activity android:name=".activity.GameActivity"></activity>
+        <activity android:name=".activity.GameActivity" />
+        <activity android:name=".activity.action.GameSettingsAction"></activity>
     </application>
 
 </manifest>

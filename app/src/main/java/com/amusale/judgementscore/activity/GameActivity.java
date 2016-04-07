@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.amusale.judgementscore.DBHelper;
 import com.amusale.judgementscore.R;
 import com.amusale.judgementscore.ScoreAdapter;
-import com.amusale.judgementscore.activity.MainActivity;
 import com.amusale.judgementscore.model.Game;
 import com.amusale.judgementscore.model.Score;
 
@@ -64,9 +63,11 @@ public class GameActivity extends AppCompatActivity {
             createGameButton.setVisibility(View.GONE);
 
             score = dbHelper.getScore(gameId);
+            setTitle("Finish Game");
         } else {
             finishGameButton.setVisibility(View.GONE);
             createGameButton.setVisibility(View.VISIBLE);
+            setTitle("Start Game");
         }
 
         TextView wildcardHeader = (TextView) findViewById(R.id.currentWildcard);
