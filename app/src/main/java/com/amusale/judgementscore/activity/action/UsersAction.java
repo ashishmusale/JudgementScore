@@ -1,4 +1,4 @@
-package com.amusale.judgementscore;
+package com.amusale.judgementscore.activity.action;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,9 +10,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import com.amusale.judgementscore.DBHelper;
+import com.amusale.judgementscore.R;
 import com.amusale.judgementscore.activity.CreateOrEditUserActivity;
 
-public class ActionUsers extends AppCompatActivity {
+public class UsersAction extends AppCompatActivity {
 
     public final static String KEY_EXTRA_CONTACT_ID = "KEY_EXTRA_CONTACT_ID";
 
@@ -28,7 +30,7 @@ public class ActionUsers extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ActionUsers.this, CreateOrEditUserActivity.class);
+                Intent intent = new Intent(UsersAction.this, CreateOrEditUserActivity.class);
                 intent.putExtra(KEY_EXTRA_CONTACT_ID, 0);
                 startActivity(intent);
             }
@@ -55,7 +57,7 @@ public class ActionUsers extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> listView, View view,
                                     int position, long id) {
-                Cursor itemCursor = (Cursor) ActionUsers.this.listView.getItemAtPosition(position);
+                Cursor itemCursor = (Cursor) UsersAction.this.listView.getItemAtPosition(position);
                 int personID = itemCursor.getInt(itemCursor.getColumnIndex(DBHelper.USER_COLUMN_ID));
                 Intent intent = new Intent(getApplicationContext(), CreateOrEditUserActivity.class);
                 intent.putExtra(KEY_EXTRA_CONTACT_ID, personID);

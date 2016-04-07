@@ -20,7 +20,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amusale.judgementscore.ActionUsers;
+import com.amusale.judgementscore.activity.action.UsersAction;
 import com.amusale.judgementscore.DBHelper;
 import com.amusale.judgementscore.R;
 import com.amusale.judgementscore.model.Score;
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_users) {
-            Intent intent=new Intent(MainActivity.this, ActionUsers.class);
+            Intent intent=new Intent(MainActivity.this, UsersAction.class);
             startActivity(intent);
         }
 

@@ -22,7 +22,7 @@
             android:name=".activity.CreateOrEditUserActivity"
             android:label="@string/title_activity_activity_edit"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ActionUsers" />
+        <activity android:name=".activity.action.UsersAction" />
         <activity android:name=".activity.GameActivity"></activity>
     </application>
 
