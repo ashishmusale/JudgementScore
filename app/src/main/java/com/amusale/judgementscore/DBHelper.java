@@ -3,7 +3,6 @@ package com.amusale.judgementscore;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -248,7 +247,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private Cursor getAll(String tableName) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "SELECT * FROM " + tableName, null );
-        return res;
+        return db.rawQuery( "SELECT * FROM " + tableName, null);
     }
 }

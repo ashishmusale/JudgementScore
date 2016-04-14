@@ -2,6 +2,7 @@ package com.amusale.judgementscore.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public final static String SCORE_ACTION = "SCORE_ACTION";
     public final static String SCORE_ACTION_NEW = "SCORE_ACTION_NEW";
     public final static String SCORE_ACTION_EDIT = "SCORE_ACTION_EDIT";
-    private static final int HEIGHT = 200;
+    private static final int HEIGHT = 100;
 
     RelativeLayout relativeLayout;
     private DBHelper dbHelper ;
@@ -102,11 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
         List<User> users = dbHelper.getAllUsers();
 
-
-        int cl = users.size() + 1;
-
         ScrollView sv = new ScrollView(this);
-        TableLayout tableLayout = createTableLayout(users, cl);
+        TableLayout tableLayout = createTableLayout(users);
         HorizontalScrollView hsv = new HorizontalScrollView(this);
 
         hsv.addView(tableLayout);
@@ -119,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private TableLayout createTableLayout(List<User> users, int columnCount) {
+    private TableLayout createTableLayout(List<User> users) {
         // 1) Create a tableLayout and its params
         TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
         TableLayout tableLayout = new TableLayout(this);
@@ -131,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         tableRowParams.weight = 1;
         List<Score> scores = dbHelper.getAllScores();
 
-        for (int i = 0; i < scores.size() +1 ; i++) {
+        for (int i = 0; i < (scores.size() +1) ; i++) {
             // 3) create tableRow
             TableRow tableRow = new TableRow(this);
             tableRow.setBackgroundColor(Color.WHITE);
@@ -140,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             tableRow.setGravity(Gravity.CENTER_VERTICAL);
 
             Map<String, String> scoreMap = new HashMap<>();
+            Map<String, String> wonStatusMap = new HashMap<>();
             Score score = null;
             if (i > 0) {
                 score = scores.get(i-1);
@@ -150,13 +149,14 @@ public class MainActivity extends AppCompatActivity {
                     String[] userPoints = s.split(":");
                     if (userPoints.length > 1) {
                         scoreMap.put(userPoints[0], userPoints[1]);
+                        wonStatusMap.put(userPoints[0], userPoints[2]);
                     }
                 }
 
             }
 
 
-            for (int j= 0; j < columnCount; j++) {
+            for (int j= 0; j < (users.size() + 1); j++) {
 
                 TextView textView = generateTextView(this);
                 User user = null;
@@ -174,7 +174,10 @@ public class MainActivity extends AppCompatActivity {
                     tableRow.addView(fillRowHeaders(score));
                 } else {
                     // Score cells
-                    tableRow.addView(fillScoreCells(scoreMap.get(Integer.toString(user.getUserId())), textView), tableRowParams);
+                    tableRow.addView(fillScoreCells(scoreMap.get(String.format("%d", user.getUserId())),
+                            wonStatusMap.get(String.format("%d", user.getUserId())),
+                            score.getStatus(),
+                            textView), tableRowParams);
                 }
             }
 
@@ -187,27 +190,60 @@ public class MainActivity extends AppCompatActivity {
         tableRow.setMinimumHeight(HEIGHT);
         tableRow.setMinimumWidth(HEIGHT);
         tableRow.setGravity(Gravity.CENTER_VERTICAL);
-        TextView textView = new TextView(this);
-        textView.setHeight(HEIGHT);
-        textView.setWidth(HEIGHT);
-        textView.setBackgroundColor(Color.WHITE);
-        textView.setGravity(Gravity.CENTER);
-        textView.setText("Total");
-        tableRow.addView(textView);
+        TextView titleView = generateTextView(this);
+        titleView.setHeight(HEIGHT);
+        titleView.setWidth(HEIGHT);
+        titleView.setBackgroundColor(Color.WHITE);
+        titleView.setGravity(Gravity.CENTER);
+        titleView.setText("Total");
+        tableRow.addView(titleView);
+
+        for (int j= 0; j < users.size(); j++) {
+            User user = users.get(j);
+            int sum = 0;
+            for (Score score: scores) {
+                String[] points = score.getPoints().split(";");
+
+                for (String s : points) {
+
+                    String[] userPoints = s.split(":");
+                    if (userPoints.length > 2 &&
+                            Integer.parseInt(userPoints[0]) == user.getUserId()) {
+                        int numOfHands = Integer.parseInt(userPoints[1]);
+                        int wonStatus = Integer.parseInt(userPoints[2]);
+
+                        if (wonStatus == GameActivity.STATUS_WON) {
+                            if (numOfHands != 0) {
+                                sum += (numOfHands * 10);
+                            } else {
+                                sum += 10;
+                            }
+                        }
+                    }
+                }
+            }
+
+            TextView textView = new TextView(this);
+            textView.setHeight(HEIGHT);
+            textView.setWidth(HEIGHT);
+            textView.setBackgroundColor(Color.WHITE);
+            textView.setGravity(Gravity.CENTER);
+            textView.setText(String.format("%d", sum));
+            tableRow.addView(textView);
+        }
         tableLayout.addView(tableRow);
+
 
         return tableLayout;
     }
 
     private int getResource(String value) {
-        if (value.equals("diamond")) {
-            return R.mipmap.diamond2;
-        } else if (value.equals("spade")) {
-            return R.mipmap.chip;
-        } else if (value.equals("clubs")) {
-            return R.mipmap.clubs;
+        switch (value) {
+            case "diamond": return R.mipmap.diamond2;
+            case "spade": return R.mipmap.chip;
+            case "clubs": return R.mipmap.clubs;
+            case "hearts": return R.mipmap.hearts;
         }
-
         return R.mipmap.hearts;
     }
 
@@ -226,10 +262,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private TextView fillScoreCells(String point, TextView textView) {
+    private TextView fillScoreCells(String point, String wonStatus, String scoreStatus, TextView textView) {
 
-        if (null == point) {
+        if (null == point && null == wonStatus) {
             point = "0";
+        } else {
+            if (Integer.parseInt(wonStatus) == GameActivity.STATUS_WON) {
+                int pointInt = Integer.parseInt(point);
+                if (pointInt == 0 ) {
+                    pointInt = 1; // if user won with 0 hands, they get 10 points
+                }
+                point = String.format("%d", pointInt * 10);
+            } else {
+                if (!scoreStatus.equals("In Progress")) {
+                    textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                }
+            }
         }
         textView.setText(point);
         return textView;

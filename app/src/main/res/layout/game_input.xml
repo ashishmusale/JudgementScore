@@ -75,6 +75,16 @@
             android:src="@mipmap/close"
             />
 
+        <TextView
+            android:id="@+id/numOfHandsReadOnly"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="@dimen/vertical_margin"
+            android:textSize="@dimen/text_size"
+            android:layout_gravity="bottom"
+            android:textAlignment="center"/>
+
         <ImageView
             android:id="@+id/wonBtn"
             android:layout_width="40dp"

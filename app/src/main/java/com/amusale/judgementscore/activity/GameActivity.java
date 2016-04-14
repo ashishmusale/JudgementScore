@@ -47,7 +47,7 @@ public class GameActivity extends AppCompatActivity {
         Score score = new Score();
         score.setMaxNumOfCards(getNumOfHands());
         score.setWildcard(getWildCard());
-        gameInfo.setScore(score);
+
 
         final ScoreAdapter scoreAdapter = new ScoreAdapter(this, R.layout.game_input, dbHelper.getAllUsers());
         scoreAdapter.setGameInfo(gameInfo);
@@ -69,7 +69,7 @@ public class GameActivity extends AppCompatActivity {
             createGameButton.setVisibility(View.VISIBLE);
             setTitle("Start Game");
         }
-
+        gameInfo.setScore(score);
         TextView wildcardHeader = (TextView) findViewById(R.id.currentWildcard);
         wildcardHeader.setText(score.getWildcard());
 
@@ -83,11 +83,13 @@ public class GameActivity extends AppCompatActivity {
                     String points = "";
                     for (String key : keys) {
 
-                        Log.d("KEY: ", key);
                         String[] keySplit = key.split(":");
                         if (keySplit.length == 2) {
                             String uid = keySplit[1];
                             String value = scoreAdapter.getTextValues().get(key);
+                            if (null == value) {
+                                value = "0";
+                            }
                             int status = STATUS_LOST;
                             points += uid + ":" + value + ":" + status;
                             points += ";";
@@ -119,7 +121,7 @@ public class GameActivity extends AppCompatActivity {
                     if (keySplit.length == 2) {
                         String uid = keySplit[1];
                         String value = scoreAdapter.getTextValues().get(key);
-                        int status = STATUS_LOST;
+                        int status = scoreAdapter.getWonStatus().get(uid);
                         points += uid + ":" + value + ":" + status;
                         points += ";";
                     }

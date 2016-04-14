@@ -3,6 +3,7 @@ package com.amusale.judgementscore;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amusale.judgementscore.activity.GameActivity;
 import com.amusale.judgementscore.activity.MainActivity;
 import com.amusale.judgementscore.model.Game;
 import com.amusale.judgementscore.model.User;
@@ -48,10 +50,14 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         TextView _id;
         TextView userName;
         EditText numOfHands;
+        TextView numOfHandsReadOnly;
     }
 
 
     private HashMap<String, String> textValues = new HashMap<String, String>();
+    private HashMap<String, Integer> wonStatus = new HashMap<String, Integer>();
+
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
@@ -67,6 +73,8 @@ public class ScoreAdapter extends ArrayAdapter<User> {
             holder._id = (TextView)convertView.findViewById(R.id._id);
             holder.userName = (TextView)convertView.findViewById(R.id.userName);
             holder.numOfHands = (EditText)convertView.findViewById(R.id.numOfHands);
+
+            holder.numOfHandsReadOnly = (TextView) convertView.findViewById(R.id.numOfHandsReadOnly);
 
             convertView.setTag(holder);
         } else {
@@ -84,6 +92,32 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         }
         holder.numOfHands.setText(value);
 
+        if (gameInfo.getGameAction().equals(MainActivity.SCORE_ACTION_EDIT)) {
+
+            Log.i("ScoreAdapter", "Edit Mode ON");
+            Log.i("ScoreAdapter", "Score: " + gameInfo.getScore().getPoints());
+
+            String[] points = gameInfo.getScore().getPoints().split(";");
+
+            for (String s : points) {
+                Log.i("ScoreAdapter", "points: " + points);
+
+                String[] userPoints = s.split(":");
+                if (userPoints.length > 1 &&
+                        Integer.parseInt(userPoints[0]) == currentUser.getUserId()) {
+                    Log.i("ScoreAdapter", "user: " + currentUser.getUserId() + "points: " + points);
+                    holder.numOfHandsReadOnly.setText(userPoints[1]);
+                    textValues.put("editTextPosition:" + currentUser.getUserId(), userPoints[1]);
+                    wonStatus.put(Integer.toString(currentUser.getUserId()), GameActivity.STATUS_LOST);
+
+                    break;
+                } else {
+                    Log.i("ScoreAdapter", "user did not match: " + currentUser.getUserId());
+
+                }
+            }
+        }
+
         if(convertViewWasNull){
             //be aware that you shouldn't do this for each call on getView, just once by listItem when convertView is null
             holder.numOfHands.addTextChangedListener(new GenericTextWatcher(holder.numOfHands, currentUser.getUserId()));
@@ -93,7 +127,7 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         //whereas, this should be called on each getView call, to update view tags.
         holder.numOfHands.setTag("editTextPosition:" + currentUser.getUserId());
 
-        setupImageListener(convertView);
+        setupImageListener(convertView, currentUser);
         setupViews(convertView, holder);
 
         return convertView;
@@ -126,14 +160,19 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         return textValues;
     }
 
+    public HashMap<String, Integer> getWonStatus() {
+        return wonStatus;
+    }
 
-    private void setupImageListener(View view) {
+    private void setupImageListener(View view, final User currentUser) {
         ImageView wonImageView = (ImageView) view.findViewById(R.id.wonBtn);
         ImageView loseImageView = (ImageView) view.findViewById(R.id.loseBtn);
 
         if (null == wonImageView || null == loseImageView) {
             return;
         }
+
+
 
         wonImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,8 +181,10 @@ public class ScoreAdapter extends ArrayAdapter<User> {
                 Toast.makeText(v.getContext(),
                         "Won Clicked",
                         Toast.LENGTH_SHORT).show();
-                View root = (View)((View)v.getParent()).getParent();
+                View root = (View)(v.getParent()).getParent();
                 root.setBackgroundResource(R.drawable.custom_border);
+                wonStatus.put(Integer.toString(currentUser.getUserId()), GameActivity.STATUS_WON);
+
             }
         });
 
@@ -154,6 +195,8 @@ public class ScoreAdapter extends ArrayAdapter<User> {
                 Toast.makeText(v.getContext(),
                         "Loss Clicked",
                         Toast.LENGTH_SHORT).show();
+                wonStatus.put(Integer.toString(currentUser.getUserId()), GameActivity.STATUS_LOST);
+
             }
         });
     }

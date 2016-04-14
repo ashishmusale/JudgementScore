@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +19,7 @@ import com.amusale.judgementscore.model.User;
 /**
  * Created by amusale on 4/4/16.
  */
-public class CreateOrEditUserActivity extends ActionBarActivity implements View.OnClickListener {
+public class CreateOrEditUserActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private DBHelper dbHelper ;
@@ -117,7 +118,6 @@ public class CreateOrEditUserActivity extends ActionBarActivity implements View.
                 AlertDialog d = builder.create();
                 d.setTitle("Delete Person?");
                 d.show();
-                return;
         }
     }
 
