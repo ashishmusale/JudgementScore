@@ -12,8 +12,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -39,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
     public final static String SCORE_ACTION = "SCORE_ACTION";
     public final static String SCORE_ACTION_NEW = "SCORE_ACTION_NEW";
     public final static String SCORE_ACTION_EDIT = "SCORE_ACTION_EDIT";
-    private static final int HEIGHT = 100;
+    private static final int HEIGHT = 150;
+    private static final int WIDTH = 200;
+
 
     RelativeLayout relativeLayout;
     private DBHelper dbHelper ;
@@ -103,15 +107,29 @@ public class MainActivity extends AppCompatActivity {
 
         List<User> users = dbHelper.getAllUsers();
 
+        HorizontalScrollView usersView = new HorizontalScrollView(this);
+        TableLayout usersLayout = createUsersLayout(users);
+        usersView.addView(usersLayout);
+        usersView.setId(R.id.userView);
+
+
         ScrollView sv = new ScrollView(this);
         TableLayout tableLayout = createTableLayout(users);
         HorizontalScrollView hsv = new HorizontalScrollView(this);
 
         hsv.addView(tableLayout);
         sv.addView(hsv);
+
+        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        p.addRule(RelativeLayout.BELOW, R.id.userView);
+
+        sv.setLayoutParams(p);
+
         relativeLayout = (RelativeLayout) findViewById(R.id.rl);
 
         if (null != relativeLayout) {
+            relativeLayout.addView(usersView);
             relativeLayout.addView(sv);
         }
 
@@ -134,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             TableRow tableRow = new TableRow(this);
             tableRow.setBackgroundColor(Color.WHITE);
             tableRow.setMinimumHeight(HEIGHT);
-            tableRow.setMinimumWidth(HEIGHT);
+            tableRow.setMinimumWidth(WIDTH);
             tableRow.setGravity(Gravity.CENTER_VERTICAL);
 
             Map<String, String> scoreMap = new HashMap<>();
@@ -188,11 +206,11 @@ public class MainActivity extends AppCompatActivity {
         TableRow tableRow = new TableRow(this);
         tableRow.setBackgroundColor(Color.BLACK);
         tableRow.setMinimumHeight(HEIGHT);
-        tableRow.setMinimumWidth(HEIGHT);
+        tableRow.setMinimumWidth(WIDTH);
         tableRow.setGravity(Gravity.CENTER_VERTICAL);
         TextView titleView = generateTextView(this);
         titleView.setHeight(HEIGHT);
-        titleView.setWidth(HEIGHT);
+        titleView.setWidth(WIDTH);
         titleView.setBackgroundColor(Color.WHITE);
         titleView.setGravity(Gravity.CENTER);
         titleView.setText("Total");
@@ -287,8 +305,8 @@ public class MainActivity extends AppCompatActivity {
         ImageView image = new ImageView(MainActivity.this);
         image.setImageResource(getResource(score.getWildcard()));
         image.setAdjustViewBounds(true);
-        image.setMaxHeight(128);
-        image.setMaxWidth(128);
+        image.setMaxHeight(HEIGHT);
+        image.setMaxWidth(HEIGHT);
         image.setBackgroundColor(Color.WHITE);
         image.setTag(R.id.gameIdResource, score.getId());
 
@@ -353,10 +371,42 @@ public class MainActivity extends AppCompatActivity {
     private TextView generateTextView(MainActivity mainActivity) {
         TextView textView = new TextView(mainActivity);
         textView.setHeight(HEIGHT);
-        textView.setWidth(HEIGHT);
+        textView.setWidth(WIDTH);
         textView.setBackgroundColor(Color.WHITE);
         textView.setGravity(Gravity.CENTER);
 
         return textView;
+    }
+
+    private TableLayout createUsersLayout(List<User> users) {
+        TableLayout.LayoutParams usersTableLayoutParams = new TableLayout.LayoutParams();
+        TableLayout usersLayout = new TableLayout(this);
+
+        // 2) create tableRow params
+        TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
+        tableRowParams.setMargins(10, 10, 10, 10);
+        tableRowParams.weight = 1;
+
+        TableRow tableRow = new TableRow(this);
+        tableRow.setMinimumHeight(HEIGHT);
+        tableRow.setMinimumWidth(WIDTH);
+        tableRow.setGravity(Gravity.CENTER_VERTICAL);
+        tableRow.setLayoutParams(tableRowParams);
+
+        android.widget.TableRow.LayoutParams p = new android.widget.TableRow.LayoutParams();
+        p.rightMargin = 20;
+
+        for (User user: users) {
+            TextView titleView = generateTextView(this);
+            titleView.setLayoutParams(p);
+            titleView.setGravity(Gravity.CENTER);
+            titleView.setText(user.getUserName());
+            titleView.setTextColor(getResources().getColor(R.color.colorWhite));
+            titleView.setBackgroundResource(R.drawable.circular_border);
+            tableRow.addView(titleView);
+
+        }
+        usersLayout.addView(tableRow, usersTableLayoutParams);
+        return usersLayout;
     }
 }
