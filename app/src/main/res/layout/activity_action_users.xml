@@ -27,6 +27,6 @@
         android:padding="@dimen/activity_vertical_margin"
         android:textColor="@color/colorWhite"
         android:background="@drawable/action_button"
-        android:text="@string/Add_New"/>
+        android:text="@string/add"/>
 
 </RelativeLayout>

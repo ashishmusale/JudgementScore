@@ -13,10 +13,10 @@
     <!-- add new user -->
     <string name="title_activity_add_new_user">Add a new user</string>
 
-    <string name="Add_New">Add New</string>
-    <string name="edit">Edit Person</string>
-    <string name="delete">Delete Person</string>
-    <string name="save">Save Person</string>
+    <string name="add">Add User</string>
+    <string name="edit">Edit User</string>
+    <string name="delete">Delete User</string>
+    <string name="save">Save User</string>
 
     <string name="name">Name</string>
     <string name="gender">Gender</string>
