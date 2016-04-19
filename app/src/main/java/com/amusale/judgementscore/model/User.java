@@ -9,12 +9,14 @@ public class User {
     private String userName;
     private String userGender;
     private int userAge;
+    private boolean playing;
 
-    public User(int userId, String userName, String userGender, int userAge) {
+    public User(int userId, String userName, String userGender, int userAge, boolean playing) {
         this.userId = userId;
         this.userName = userName;
         this.userGender = userGender;
         this.userAge = userAge;
+        this.playing = playing;
     }
 
     public int getUserId() {
@@ -49,6 +51,14 @@ public class User {
         this.userAge = userAge;
     }
 
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -56,6 +66,7 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", userGender='" + userGender + '\'' +
                 ", userAge=" + userAge +
+                ", playing=" + playing +
                 '}';
     }
 }

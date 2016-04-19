@@ -25,6 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String USER_COLUMN_NAME = "name";
     public static final String USER_COLUMN_GENDER = "gender";
     public static final String USER_COLUMN_AGE = "age";
+    public static final String USER_COLUMN_PLAYING = "playing";
 
     public static final String SCORE_TABLE_NAME = "score";
     public static final String SCORE_COLUMN_ID = "_id";
@@ -45,6 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         "(" + USER_COLUMN_ID + " INTEGER PRIMARY KEY, " +
                         USER_COLUMN_NAME + " TEXT, " +
                         USER_COLUMN_GENDER + " TEXT, " +
+                        USER_COLUMN_PLAYING + " TEXT, " +
                         USER_COLUMN_AGE + " INTEGER)"
         );
         db.execSQL(
@@ -91,29 +93,32 @@ public class DBHelper extends SQLiteOpenHelper {
                         "(" + USER_COLUMN_ID + " INTEGER PRIMARY KEY, " +
                         USER_COLUMN_NAME + " TEXT, " +
                         USER_COLUMN_GENDER + " TEXT, " +
+                        USER_COLUMN_PLAYING + " TEXT, " +
                         USER_COLUMN_AGE + " INTEGER)"
         );
     }
 
-    public boolean insertUser(String name, String gender, int age) {
+    public boolean insertUser(String name, String gender, int age, boolean playing) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(USER_COLUMN_NAME, name);
         contentValues.put(USER_COLUMN_GENDER, gender);
         contentValues.put(USER_COLUMN_AGE, age);
+        contentValues.put(USER_COLUMN_PLAYING, playing? "true" : "false");
 
         db.insert(USER_TABLE_NAME, null, contentValues);
         return true;
     }
 
 
-    public boolean updateUser(Integer id, String name, String gender, int age) {
+    public boolean updateUser(Integer id, String name, String gender, int age, boolean playing) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(USER_COLUMN_NAME, name);
         contentValues.put(USER_COLUMN_GENDER, gender);
         contentValues.put(USER_COLUMN_AGE, age);
+        contentValues.put(USER_COLUMN_PLAYING, playing?"true":"false");
         db.update(USER_TABLE_NAME, contentValues, USER_COLUMN_ID + " = ? ", new String[]{Integer.toString(id)});
         return true;
     }
@@ -157,8 +162,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String userName = cursor.getString(cursor.getColumnIndex(DBHelper.USER_COLUMN_NAME));
         String userGender = cursor.getString(cursor.getColumnIndex(DBHelper.USER_COLUMN_GENDER));
         int userAge = cursor.getInt(cursor.getColumnIndex(DBHelper.USER_COLUMN_AGE));
+        String playing = cursor.getString(cursor.getColumnIndex(DBHelper.USER_COLUMN_PLAYING));
 
-        return new User(userId, userName, userGender, userAge);
+        return new User(userId, userName, userGender, userAge, Boolean.parseBoolean(playing));
     }
 
     // SCORE
