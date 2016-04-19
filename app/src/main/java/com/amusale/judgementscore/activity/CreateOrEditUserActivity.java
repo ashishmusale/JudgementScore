@@ -5,9 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +16,6 @@ import android.widget.Toast;
 
 import com.amusale.judgementscore.DBHelper;
 import com.amusale.judgementscore.R;
-import com.amusale.judgementscore.activity.action.GameSettingsAction;
-import com.amusale.judgementscore.activity.action.UsersAction;
 import com.amusale.judgementscore.model.User;
 
 /**
@@ -33,7 +29,6 @@ public class CreateOrEditUserActivity extends AppCompatActivity implements View.
     EditText genderEditText;
     EditText ageEditText;
 
-    Button saveButton;
     LinearLayout buttonLayout;
     Button editButton, deleteButton;
 
@@ -50,8 +45,6 @@ public class CreateOrEditUserActivity extends AppCompatActivity implements View.
         genderEditText = (EditText) findViewById(R.id.editTextGender);
         ageEditText = (EditText) findViewById(R.id.editTextAge);
 
-        saveButton = (Button) findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(this);
         buttonLayout = (LinearLayout) findViewById(R.id.buttonLayout);
         editButton = (Button) findViewById(R.id.editButton);
         editButton.setOnClickListener(this);
@@ -62,7 +55,6 @@ public class CreateOrEditUserActivity extends AppCompatActivity implements View.
 
         if(userID > 0) {
             setTitle(getResources().getString(R.string.edit));
-            saveButton.setVisibility(View.GONE);
             buttonLayout.setVisibility(View.VISIBLE);
 
             User user = dbHelper.getUser(userID);
@@ -86,11 +78,7 @@ public class CreateOrEditUserActivity extends AppCompatActivity implements View.
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.saveButton:
-                persistPerson();
-                return;
             case R.id.editButton:
-                saveButton.setVisibility(View.VISIBLE);
                 buttonLayout.setVisibility(View.GONE);
                 nameEditText.setEnabled(true);
                 nameEditText.setFocusableInTouchMode(true);
@@ -131,8 +119,10 @@ public class CreateOrEditUserActivity extends AppCompatActivity implements View.
     public boolean onCreateOptionsMenu(Menu menu) {
 
         if (userID <= 0) {
-            final MenuItem menuItem = menu.add(Menu.NONE, R.id.menuAddUser, Menu.NONE, R.string.save);
-            MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            final MenuItem menuItem = menu.add(Menu.NONE, R.id.menuSaveUser, Menu.NONE, R.string.save);
+            menuItem.setIcon(R.mipmap.check);
+            MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         }
 
         return true;
@@ -145,7 +135,7 @@ public class CreateOrEditUserActivity extends AppCompatActivity implements View.
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.menuAddUser) {
+        if (id == R.id.menuSaveUser) {
             persistPerson();
         }
 

@@ -4,7 +4,7 @@
     <item type="id" name="userIdResource" />
     <item type="id" name="userPlayingStatus" />
 
-    <item type="id" name="menuAddUser" />
+    <item type="id" name="menuSaveUser" />
 
     <item type="id" name="userView" />
 

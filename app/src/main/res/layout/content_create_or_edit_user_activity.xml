@@ -76,18 +76,6 @@
         android:text="@string/age"
         android:textSize="@dimen/text_size" />
 
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:textColor="@color/colorWhite"
-        android:background="@drawable/action_button"
-        android:onClick="run"
-        android:text="@string/save"
-        android:textSize="@dimen/text_size" />
-
     <LinearLayout
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
