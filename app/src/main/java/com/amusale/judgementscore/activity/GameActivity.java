@@ -121,7 +121,8 @@ public class GameActivity extends AppCompatActivity {
                     if (keySplit.length == 2) {
                         String uid = keySplit[1];
                         String value = scoreAdapter.getTextValues().get(key);
-                        int status = scoreAdapter.getWonStatus().get(uid);
+                        Integer status = scoreAdapter.getWonStatus().get(uid);
+                        if (null == status) status = STATUS_LOST;
                         points += uid + ":" + value + ":" + status;
                         points += ";";
                     }

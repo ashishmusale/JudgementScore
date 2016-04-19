@@ -89,6 +89,7 @@ public class ScoreAdapter extends ArrayAdapter<User> {
         String value = textValues.get("editTextPosition:" + currentUser.getUserId());
         if (null == value) {
             value = "0";
+            textValues.put("editTextPosition:" + currentUser.getUserId(), "0");
         }
         holder.numOfHands.setText(value);
 
@@ -107,7 +108,9 @@ public class ScoreAdapter extends ArrayAdapter<User> {
                         Integer.parseInt(userPoints[0]) == currentUser.getUserId()) {
                     Log.i("ScoreAdapter", "user: " + currentUser.getUserId() + "points: " + points);
                     holder.numOfHandsReadOnly.setText(userPoints[1]);
-                    textValues.put("editTextPosition:" + currentUser.getUserId(), userPoints[1]);
+                    if (null != userPoints[1]) {
+                        textValues.put("editTextPosition:" + currentUser.getUserId(), userPoints[1]);
+                    }
                     wonStatus.put(Integer.toString(currentUser.getUserId()), GameActivity.STATUS_LOST);
 
                     break;
@@ -195,6 +198,8 @@ public class ScoreAdapter extends ArrayAdapter<User> {
                 Toast.makeText(v.getContext(),
                         "Loss Clicked",
                         Toast.LENGTH_SHORT).show();
+                View root = (View)(v.getParent()).getParent();
+                root.setBackgroundResource(0);
                 wonStatus.put(Integer.toString(currentUser.getUserId()), GameActivity.STATUS_LOST);
 
             }
