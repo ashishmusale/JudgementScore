@@ -5,4 +5,13 @@
     <color name="colorAccent">#000000</color>
 
     <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="settingsBackground">#41c8f5</color>
+    <color name="greenColor">#6fc44c</color>
+
+
+    <color name="startColor">#3fc8f2</color>
+    <color name="endColor">#40c8f5</color>
+
+
 </resources>

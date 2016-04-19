@@ -11,14 +11,24 @@
 
     <Button
         android:id="@+id/resetGames"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:padding="@dimen/default_padding"
+        android:gravity="center_vertical"
+        android:background="@drawable/settings_button"
+        android:textColor="@color/colorWhite"
         android:text="Reset Games"/>
 
     <Button
         android:id="@+id/resetUsers"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/resetGames"
+        android:layout_margin="@dimen/default_margin"
+        android:padding="@dimen/default_padding"
+        android:gravity="center_vertical"
+        android:background="@drawable/settings_button"
+        android:textColor="@color/colorWhite"
         android:text="Reset Users"/>
 </RelativeLayout>
