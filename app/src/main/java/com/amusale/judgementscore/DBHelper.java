@@ -105,21 +105,27 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(USER_COLUMN_NAME, name);
         contentValues.put(USER_COLUMN_GENDER, gender);
         contentValues.put(USER_COLUMN_AGE, age);
-        contentValues.put(USER_COLUMN_PLAYING, playing? "true" : "false");
+        contentValues.put(USER_COLUMN_PLAYING, playing ? "true" : "false");
 
         db.insert(USER_TABLE_NAME, null, contentValues);
         return true;
     }
 
 
-    public boolean updateUser(Integer id, String name, String gender, int age, boolean playing) {
+    public boolean updateUser(Integer id, String name, String gender, int age) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(USER_COLUMN_NAME, name);
         contentValues.put(USER_COLUMN_GENDER, gender);
         contentValues.put(USER_COLUMN_AGE, age);
-        contentValues.put(USER_COLUMN_PLAYING, playing?"true":"false");
         db.update(USER_TABLE_NAME, contentValues, USER_COLUMN_ID + " = ? ", new String[]{Integer.toString(id)});
+        return true;
+    }
+    public boolean setUserPlaying(int userId, boolean playing) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(USER_COLUMN_PLAYING, playing? "true":"false");
+        db.update(USER_TABLE_NAME, contentValues, USER_COLUMN_ID + " = ? ", new String[]{Integer.toString(userId)});
         return true;
     }
 
@@ -155,6 +161,17 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         return users;
+    }
+    public List<User> getAllPlayingUsers() {
+        List<User> allUsers = getAllUsers();
+        List<User> playingUsers = new ArrayList<>();
+
+        for (User user: allUsers) {
+            if (user.isPlaying()) {
+                playingUsers.add(user);
+            }
+        }
+        return playingUsers;
     }
 
     private User getUserFromCursor(Cursor cursor) {

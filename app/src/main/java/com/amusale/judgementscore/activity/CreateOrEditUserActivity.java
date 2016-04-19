@@ -125,8 +125,7 @@ public class CreateOrEditUserActivity extends AppCompatActivity implements View.
         if(userID > 0) {
             if(dbHelper.updateUser(userID, nameEditText.getText().toString(),
                     genderEditText.getText().toString(),
-                    Integer.parseInt(ageEditText.getText().toString()),
-                    true)) {
+                    Integer.parseInt(ageEditText.getText().toString()))) {
                 Toast.makeText(getApplicationContext(), "Person Update Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -140,7 +139,7 @@ public class CreateOrEditUserActivity extends AppCompatActivity implements View.
             if(dbHelper.insertUser(nameEditText.getText().toString(),
                     genderEditText.getText().toString(),
                     Integer.parseInt(ageEditText.getText().toString()),
-                    true)) {
+                    false)) {
                 Toast.makeText(getApplicationContext(), "Person Inserted", Toast.LENGTH_SHORT).show();
             }
             else{

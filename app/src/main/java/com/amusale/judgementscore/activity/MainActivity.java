@@ -105,16 +105,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void createGridView() {
 
-        List<User> users = dbHelper.getAllUsers();
-
         HorizontalScrollView usersView = new HorizontalScrollView(this);
-        TableLayout usersLayout = createUsersLayout(users);
+        TableLayout usersLayout = createUsersLayout(dbHelper.getAllUsers());
         usersView.addView(usersLayout);
         usersView.setId(R.id.userView);
 
 
         ScrollView sv = new ScrollView(this);
-        TableLayout tableLayout = createTableLayout(users);
+        TableLayout tableLayout = createTableLayout(dbHelper.getAllPlayingUsers());
         HorizontalScrollView hsv = new HorizontalScrollView(this);
 
         hsv.addView(tableLayout);
@@ -284,6 +282,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (null == point && null == wonStatus) {
             point = "0";
+            if (!scoreStatus.equals("In Progress")) {
+                textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }
         } else {
             if (Integer.parseInt(wonStatus) == GameActivity.STATUS_WON) {
                 int pointInt = Integer.parseInt(point);
@@ -403,6 +404,22 @@ public class MainActivity extends AppCompatActivity {
             titleView.setText(user.getUserName());
             titleView.setTextColor(getResources().getColor(R.color.colorWhite));
             titleView.setBackgroundResource(R.drawable.circular_border);
+            titleView.setTag(R.id.userIdResource, user.getUserId());
+            titleView.setTag(R.id.userPlayingStatus, user.isPlaying());
+
+            titleView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int userId = (int)v.getTag(R.id.userIdResource);
+                    boolean playing = (boolean)v.getTag(R.id.userPlayingStatus);
+
+                    dbHelper.setUserPlaying(userId, !playing);
+                    finish();
+                    startActivity(getIntent());
+                }
+            });
+
+
             tableRow.addView(titleView);
 
         }

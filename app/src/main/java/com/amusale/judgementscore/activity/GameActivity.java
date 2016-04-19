@@ -40,7 +40,7 @@ public class GameActivity extends AppCompatActivity {
 
 
         Game gameInfo = new Game();
-        gameInfo.setUser(dbHelper.getAllUsers());
+        gameInfo.setUser(dbHelper.getAllPlayingUsers());
         gameInfo.setGameAction(gameAction);
         gameInfo.setGameId(gameId);
 
@@ -49,7 +49,7 @@ public class GameActivity extends AppCompatActivity {
         score.setWildcard(getWildCard());
 
 
-        final ScoreAdapter scoreAdapter = new ScoreAdapter(this, R.layout.game_input, dbHelper.getAllUsers());
+        final ScoreAdapter scoreAdapter = new ScoreAdapter(this, R.layout.game_input, dbHelper.getAllPlayingUsers());
         scoreAdapter.setGameInfo(gameInfo);
         listView = (ListView)findViewById(R.id.listUsers);
         listView.setAdapter(scoreAdapter);
